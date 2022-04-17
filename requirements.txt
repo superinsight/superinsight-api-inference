@@ -1,0 +1,4 @@
+transformers==4.16.2
+requests==2.27.1
+google-cloud-storage==2.3.0
+fastapi==0.75.1
