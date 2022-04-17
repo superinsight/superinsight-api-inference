@@ -12,7 +12,7 @@ GOOGLE_APPLICATION_CREDENTIALS | If you like to export models to GCP bucket, you
 ## Available Models
 In additional to finetune models created using the [SuperInsight FineTuning API](https://github.com/superinsight/superinsight-api-finetuning), base models can also be used.
 model | Summary
---- | --- | ---
+--- | ---
 xxxxxxxxxxxx | Finetuned models created 
 gpt-neo-125m | The `EleutherAI/gpt-neo-125M` model.
 gpt-neo-1.3b | The `EleutherAI/gpt-neo-1.3B` model.
