@@ -19,6 +19,11 @@ gpt-neo-1.3b | The `EleutherAI/gpt-neo-1.3B` model.
 gpt-neo-2.7b  | The `EleutherAI/gpt-neo-2.7B` model.
 gpt-j-6b | The `EleutherAI/gpt-j-6B` model.
 
+## API Demo
+To test out the API, you test it directly using the Swagger.
+* [Try Demo on our server](https://inference.api.superinsight.dev/docs)
+* [Try Demo on your machine](http://localhost:8080/docs)
+
 # Development
 
 ## What you will need

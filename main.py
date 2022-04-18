@@ -3,6 +3,7 @@ from typing import Optional
 from typing import List
 from pydantic import BaseModel
 import os, sys, shutil
+from fastapi.openapi.utils import get_openapi
 app = FastAPI()
 import os
 import torch
@@ -17,14 +18,7 @@ torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 models = []
 tokenizers = []
 mapping = {}
-
-class CompletionsRequest(BaseModel):
-    context: str
-    model: str
-    temperature: float = 1.0
-    repetition_penalty: float = 1.0
-    max_length: int = 50
-    sequences: int = 1
+version = "0.1.1"
 
 @app.on_event("startup")
 async def startup_event():
@@ -97,11 +91,28 @@ def generate(tokenizer, model, context, temperature, repetition_penalty, num_ret
     return gen_texts
 
 @app.get("/")
-async def read_root():
-    return {"version": "1.0.0"}
- 
+async def HealthCheck():
+    return {"version": version}
+
+class CompletionsRequest(BaseModel):
+    context: str
+    model: str
+    temperature: float = 1.0
+    repetition_penalty: float = 1.0
+    max_length: int = 50
+    sequences: int = 1
+
 @app.post("/completions")
 async def completions(req: CompletionsRequest):
+    """
+    Pass in a prompt a the finetuned model id and get completions back.
+
+    Base Model can also be used by passing the following model id
+    * gpt-neo-125m
+    * gpt-neo-1.3b
+    * gpt-neo-2.7b
+    * gpt-j-6b
+    """
     try:
       choices = []
       if req.context is not None:
@@ -115,3 +126,21 @@ async def completions(req: CompletionsRequest):
     except:
       print("Unexpected error:", sys.exc_info()[0])
       return { "status":"error"}
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    openapi_schema = get_openapi(
+        title="SuperInsight Inference API Documentation",
+        version=version,
+        description="API to inference base or finetuned GPT models",
+        routes=app.routes,
+    )
+    openapi_schema["info"]["x-logo"] = {
+        "url": "https://finetuning.api.superinsight.dev/assets/favicon.png"
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
