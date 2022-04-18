@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/pytorch:21.08-py3
+FROM python:3.8
 ADD ./ /inference
 WORKDIR /inference
 RUN apt-get -y update

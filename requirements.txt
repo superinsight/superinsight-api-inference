@@ -1,4 +1,9 @@
 transformers==4.16.2
+-f https://download.pytorch.org/whl/torch_stable.html
+torch==1.8.1+cu111
+-f https://download.pytorch.org/whl/torch_stable.html
+torchvision==0.9.1+cu111
 requests==2.27.1
-google-cloud-storage==2.3.0
 fastapi==0.75.1
+uvicorn==0.17.6
+google-cloud-storage==2.3.0
