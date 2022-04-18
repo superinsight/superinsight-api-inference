@@ -41,3 +41,8 @@ pip install -r requirements.txt
 ```
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
+
+## Run API with docker
+```
+docker run -d -p 8080:8080 --name superinsight-api-inference superinsight/superinsight-api-inference:latest
+```
