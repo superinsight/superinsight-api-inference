@@ -22,10 +22,10 @@ gpt-j-6b | The `EleutherAI/gpt-j-6B` model.
 # Development
 
 ## What you will need
-* Python3 installed
+* Python 3 installed
 
 ## Technologies
-* Python3
+* Python 3
 * HuggingFace
 * FastAPI
 
@@ -35,4 +35,9 @@ pip install -r requirements.txt
 ```
 ```
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
+```
+
+## Run API with docker
+```
+docker run -d -p 8080:8080 --name superinsight-api-inference superinsight/superinsight-api-inference:latest
 ```
