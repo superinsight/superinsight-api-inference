@@ -1,16 +1,20 @@
+import os, sys, shutil
+import torch
 from fastapi import FastAPI
 from typing import Optional
 from typing import List
 from pydantic import BaseModel
-import os, sys, shutil
-from fastapi.openapi.utils import get_openapi
-app = FastAPI()
-import os
-import torch
-from typing import List
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from google.cloud import storage
-
+from fastapi.openapi.utils import get_openapi
+from fastapi.openapi.docs import (
+    get_redoc_html,
+    get_swagger_ui_html,
+    get_swagger_ui_oauth2_redirect_html,
+)
+from fastapi.staticfiles import StaticFiles
+app = FastAPI(docs_url=None, redoc_url=None)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 bucketName= os.getenv("EXPORT_GCP_STORAGE_BUCKET", None)
 bucketFolder= os.getenv("EXPORT_GCP_STORAGE_FOLDER", "")
@@ -94,6 +98,30 @@ def generate(tokenizer, model, context, temperature, repetition_penalty, num_ret
 async def HealthCheck():
     return {"version": version}
 
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title= "SuperInsight Inference API Documentation",
+        oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+        swagger_js_url="/static/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui.css",
+        swagger_favicon_url="/static/favicon.png"
+    )
+
+@app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+async def swagger_ui_redirect():
+    return get_swagger_ui_oauth2_redirect_html()
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title="SuperInsight Inference API Documentation",
+        redoc_js_url="/static/redoc.standalone.js",
+        redoc_favicon_url="/static/favicon.png"
+    )
+
 class CompletionsRequest(BaseModel):
     context: str
     model: str
@@ -134,13 +162,9 @@ def custom_openapi():
         title="SuperInsight Inference API Documentation",
         version=version,
         description="API to inference base or finetuned GPT models",
-        routes=app.routes,
+        routes=app.routes
     )
-    openapi_schema["info"]["x-logo"] = {
-        "url": "https://finetuning.api.superinsight.dev/assets/favicon.png"
-    }
     app.openapi_schema = openapi_schema
     return app.openapi_schema
-
 
 app.openapi = custom_openapi
