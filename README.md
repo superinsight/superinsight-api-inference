@@ -8,6 +8,8 @@ Variable | Usage | Required | Default
 EXPORT_GCP_STORAGE_BUCKET | If you like to export models to GCP bucket, include the bucket name here | False | None
 EXPORT_GCP_STORAGE_FOLDER | If you like to export models to GCP bucket, include the bucket name here | False | None
 GOOGLE_APPLICATION_CREDENTIALS | If you like to export models to GCP bucket, you will need to include your credentials | False | None
+EXPORT_MODEL_REPOSITORY | Path used to download and inference finetuned models | False | models
+
 
 ## Available Models
 In additional to finetune models created using the [SuperInsight FineTuning API](https://github.com/superinsight/superinsight-api-finetuning), base models can also be used.
