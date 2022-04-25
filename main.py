@@ -18,6 +18,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
 bucketName= os.getenv("EXPORT_GCP_STORAGE_BUCKET", None)
 bucketFolder= os.getenv("EXPORT_GCP_STORAGE_FOLDER", "")
+modelRepository= os.getenv("EXPORT_MODEL_REPOSITORY", "models")
 torch_device = "cuda" if torch.cuda.is_available() else "cpu"
 models = []
 tokenizers = []
@@ -38,7 +39,7 @@ def getModelAndTokenizers(model_id):
     return tokenizers[index], models[index]
 
 def downloadModel(model_id):
-    model_directory = "models/{}".format(model_id)
+    model_directory = "{}/{}".format(modelRepository, model_id)
     bucketPath = "{}{}".format(bucketFolder, model_id)
     downloadFolder(bucketName, bucketPath, model_directory)
     return model_directory
@@ -57,7 +58,7 @@ def downloadFolder(bucket_name, source_folder, destination_folder):
     bucket = storage_client.bucket(bucket_name)
     blobs = bucket.list_blobs(prefix=source_folder)
     for blob in blobs:
-        downloadObject(bucket_name, blob.name, "models/{}".format(blob.name))
+        downloadObject(bucket_name, blob.name, "{}/{}".format(modelRepository,blob.name))
 
 def loadModelAndTokenizers(model_id):
     if model_id == "gpt-neo-125m":
